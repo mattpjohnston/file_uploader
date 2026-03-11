@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <h1><%= title %></h1>
+        <% if (currentUser) { %>
+          <p>You are logged in as <strong><%= currentUser.email %></strong>.</p>
+          <p><a href="/dashboard">Go to dashboard</a></p>
+          <form action="/logout" method="post">
+            <button class="button" type="submit">Log out</button>
+          </form>
+        <% } else { %>
+          <p>Create an account or log in to use the app.</p>
+          <div class="actions">
+            <a class="button" href="/register">Create account</a>
+            <a class="button button-secondary" href="/login">Log in</a>
+          </div>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

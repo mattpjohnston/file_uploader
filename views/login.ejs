@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <h1><%= title %></h1>
+        <p>Enter your email and password.</p>
+        <% if (error) { %>
+          <p class="message error"><%= error %></p>
+        <% } %>
+        <form class="form-grid" action="/login" method="post">
+          <label>
+            Email
+            <input autocomplete="email" name="email" required type="email" />
+          </label>
+          <label>
+            Password
+            <input autocomplete="current-password" name="password" required type="password" />
+          </label>
+          <button class="button" type="submit">Log in</button>
+        </form>
+        <p><a href="/register">Create account</a></p>
+        <p><a href="/">Home</a></p>
+      </section>
+    </main>
+  </body>
+</html>
