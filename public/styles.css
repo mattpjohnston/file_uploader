@@ -83,3 +83,12 @@ a {
   background: #fee2e2;
   color: #991b1b;
 }
+
+.message.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.meta {
+  margin-top: 0;
+}

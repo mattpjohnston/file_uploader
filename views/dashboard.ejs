@@ -10,8 +10,21 @@
     <main class="shell">
       <section class="panel">
         <h1><%= title %></h1>
-        <p>You are logged in as <strong><%= currentUser.email %></strong>.</p>
-        <p>This page is only available to logged in users.</p>
+        <p class="meta">Signed in as <strong><%= currentUser.email %></strong>.</p>
+        <p>Upload files below.</p>
+        <% if (error) { %>
+          <p class="message error"><%= error %></p>
+        <% } %>
+        <% if (success) { %>
+          <p class="message success"><%= success %></p>
+        <% } %>
+        <form class="form-grid" action="/upload" enctype="multipart/form-data" method="post">
+          <label>
+            Select a file
+            <input name="file" required type="file" />
+          </label>
+          <button class="button" type="submit">Upload file</button>
+        </form>
         <p><a href="/">Home</a></p>
         <form action="/logout" method="post">
           <button class="button" type="submit">Log out</button>
