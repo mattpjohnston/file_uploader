@@ -8,6 +8,7 @@ import session from "express-session";
 import { passport } from "./config/passport.js";
 import { prisma } from "./lib/prisma.js";
 import { authRouter } from "./routes/auth.js";
+import { filesRouter } from "./routes/files.js";
 import { indexRouter } from "./routes/index.js";
 
 const app = express();
@@ -54,6 +55,7 @@ app.use((req, res, next) => {
 
 app.use(authRouter);
 app.use(indexRouter);
+app.use(filesRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);

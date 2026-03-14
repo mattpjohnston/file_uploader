@@ -11,8 +11,44 @@ model User {
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String
+  folders      Folder[]
+  files        File[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Folder {
+  id        String    @id @default(cuid())
+  name      String
+  userId    String
+  parentId  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    Folder?   @relation("FolderChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Folder[]  @relation("FolderChildren")
+  files     File[]
+
+  @@index([userId])
+  @@index([parentId])
+}
+
+model File {
+  id         String   @id @default(cuid())
+  name       String
+  storedName String
+  path       String
+  size       Int
+  mimeType   String?
+  userId     String
+  folderId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder     Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([folderId])
 }
 
 model Session {

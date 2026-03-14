@@ -9,9 +9,13 @@
   <body>
     <main class="shell">
       <section class="panel">
-        <h1><%= title %></h1>
+        <h1><%= currentFolder.name %></h1>
         <p class="meta">Signed in as <strong><%= currentUser.email %></strong>.</p>
-        <p>Your root folder.</p>
+        <% if (currentFolder.parent) { %>
+          <p><a href="/folders/<%= currentFolder.parent.id %>">Back to <%= currentFolder.parent.name %></a></p>
+        <% } else { %>
+          <p><a href="/dashboard">Back to dashboard</a></p>
+        <% } %>
         <% if (error) { %>
           <p class="message error"><%= error %></p>
         <% } %>
@@ -20,8 +24,9 @@
         <% } %>
 
         <section class="section">
-          <h2>Create a folder</h2>
+          <h2>Create a subfolder</h2>
           <form class="form-grid" action="/folders" method="post">
+            <input name="parentId" type="hidden" value="<%= currentFolder.id %>" />
             <label>
               Folder name
               <input name="name" required type="text" />
@@ -33,7 +38,7 @@
         <section class="section">
           <h2>Upload a file</h2>
           <form class="form-grid" action="/upload" enctype="multipart/form-data" method="post">
-            <input name="folderId" type="hidden" value="" />
+            <input name="folderId" type="hidden" value="<%= currentFolder.id %>" />
             <label>
               Select a file
               <input name="file" required type="file" />
@@ -61,7 +66,7 @@
         <section class="section">
           <h2>Files</h2>
           <% if (files.length === 0) { %>
-            <p class="empty-state">No files in the root folder yet.</p>
+            <p class="empty-state">No files in this folder yet.</p>
           <% } else { %>
             <ul class="item-list">
               <% files.forEach((file) => { %>
