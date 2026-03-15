@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <h1><%= file.name %></h1>
+        <p class="meta">Signed in as <strong><%= currentUser.email %></strong>.</p>
+        <% if (file.folder) { %>
+          <p><a href="/folders/<%= file.folder.id %>">Back to <%= file.folder.name %></a></p>
+        <% } else { %>
+          <p><a href="/dashboard">Back to dashboard</a></p>
+        <% } %>
+        <% if (error) { %>
+          <p class="message error"><%= error %></p>
+        <% } %>
+
+        <section class="section">
+          <h2>File details</h2>
+          <dl class="detail-list">
+            <div class="detail-row">
+              <dt class="detail-label">Name</dt>
+              <dd class="detail-value"><%= file.name %></dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Size</dt>
+              <dd class="detail-value"><%= file.size %> bytes</dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Uploaded</dt>
+              <dd class="detail-value"><%= new Date(file.createdAt).toLocaleString() %></dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Location</dt>
+              <dd class="detail-value">
+                <% if (file.folder) { %>
+                  <a href="/folders/<%= file.folder.id %>"><%= file.folder.name %></a>
+                <% } else { %>
+                  Root folder
+                <% } %>
+              </dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Type</dt>
+              <dd class="detail-value"><%= file.mimeType || "Unknown" %></dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Stored name</dt>
+              <dd class="detail-value"><%= file.storedName %></dd>
+            </div>
+          </dl>
+        </section>
+
+        <p class="link-row">
+          <a class="button" href="/files/<%= file.id %>/download">Download file</a>
+        </p>
+
+        <p><a href="/">Home</a></p>
+        <form action="/logout" method="post">
+          <button class="button" type="submit">Log out</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

@@ -66,9 +66,13 @@
             <ul class="item-list">
               <% files.forEach((file) => { %>
                 <li class="item-card">
-                  <p class="item-title"><%= file.name %></p>
+                  <a class="item-title" href="/files/<%= file.id %>"><%= file.name %></a>
                   <p class="item-meta"><%= file.size %> bytes</p>
                   <p class="item-meta">Uploaded <%= new Date(file.createdAt).toLocaleString() %></p>
+                  <p class="item-links">
+                    <a href="/files/<%= file.id %>">View details</a>
+                    <a href="/files/<%= file.id %>/download">Download</a>
+                  </p>
                 </li>
               <% }) %>
             </ul>

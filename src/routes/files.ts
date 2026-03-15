@@ -122,6 +122,85 @@ filesRouter.get("/folders/:id", requireAuth, async (req, res, next) => {
   }
 });
 
+filesRouter.get("/files/:id", requireAuth, async (req, res, next) => {
+  const user = req.user;
+  const fileId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+  if (!user) {
+    res.redirect("/login");
+    return;
+  }
+
+  if (!fileId) {
+    res.redirect("/dashboard?error=File%20not%20found.");
+    return;
+  }
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: user.id,
+      },
+      include: {
+        folder: true,
+      },
+    });
+
+    if (!file) {
+      res.redirect("/dashboard?error=File%20not%20found.");
+      return;
+    }
+
+    res.render("file", {
+      currentUser: user,
+      error: typeof req.query.error === "string" ? req.query.error : "",
+      file,
+      title: file.name,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+filesRouter.get("/files/:id/download", requireAuth, async (req, res, next) => {
+  const user = req.user;
+  const fileId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+  if (!user) {
+    res.redirect("/login");
+    return;
+  }
+
+  if (!fileId) {
+    res.redirect("/dashboard?error=File%20not%20found.");
+    return;
+  }
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId: user.id,
+      },
+    });
+
+    if (!file) {
+      res.redirect("/dashboard?error=File%20not%20found.");
+      return;
+    }
+
+    if (!fs.existsSync(file.path)) {
+      res.redirect(`/files/${file.id}?error=This%20file%20is%20missing%20from%20storage.`);
+      return;
+    }
+
+    res.download(file.path, file.name);
+  } catch (error) {
+    next(error);
+  }
+});
+
 filesRouter.post("/folders", requireAuth, async (req, res, next) => {
   const user = req.user;
   const name = String(req.body.name ?? "").trim();

@@ -122,7 +122,33 @@ a {
   color: #555555;
 }
 
+.item-links {
+  margin: 0.75rem 0 0;
+  display: flex;
+  gap: 1rem;
+}
+
 .empty-state {
   margin: 1rem 0 0;
   color: #555555;
+}
+
+.detail-list {
+  margin: 1rem 0 0;
+}
+
+.detail-row + .detail-row {
+  margin-top: 0.75rem;
+}
+
+.detail-label {
+  font-weight: 600;
+}
+
+.detail-value {
+  margin: 0.25rem 0 0;
+}
+
+.link-row {
+  margin-top: 1.5rem;
 }
