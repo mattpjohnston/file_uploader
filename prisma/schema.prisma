@@ -36,8 +36,10 @@ model Folder {
 model File {
   id         String   @id @default(cuid())
   name       String
-  storedName String
-  path       String
+  storedName String?
+  path       String?
+  url        String?
+  cloudinaryPublicId String?
   size       Int
   mimeType   String?
   userId     String

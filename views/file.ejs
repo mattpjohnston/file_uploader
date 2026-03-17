@@ -50,8 +50,18 @@
               <dd class="detail-value"><%= file.mimeType || "Unknown" %></dd>
             </div>
             <div class="detail-row">
-              <dt class="detail-label">Stored name</dt>
-              <dd class="detail-value"><%= file.storedName %></dd>
+              <dt class="detail-label">Storage</dt>
+              <dd class="detail-value">
+                <% if (file.url) { %>
+                  Cloudinary
+                <% } else { %>
+                  Local upload
+                <% } %>
+              </dd>
+            </div>
+            <div class="detail-row">
+              <dt class="detail-label">Storage reference</dt>
+              <dd class="detail-value"><%= file.cloudinaryPublicId || file.storedName || "None" %></dd>
             </div>
           </dl>
         </section>

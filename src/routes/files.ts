@@ -3,6 +3,11 @@ import fs from "node:fs";
 import { Router, type NextFunction, type Request, type Response } from "express";
 
 import { upload } from "../config/multer.js";
+import {
+  deleteFromCloudinary,
+  getCloudinaryDownloadUrl,
+  uploadToCloudinary,
+} from "../lib/cloudinary.js";
 import { prisma } from "../lib/prisma.js";
 
 export const filesRouter = Router();
@@ -190,6 +195,21 @@ filesRouter.get("/files/:id/download", requireAuth, async (req, res, next) => {
       return;
     }
 
+    if (file.cloudinaryPublicId) {
+      res.redirect(getCloudinaryDownloadUrl(file.cloudinaryPublicId, file.name));
+      return;
+    }
+
+    if (file.url) {
+      res.redirect(file.url);
+      return;
+    }
+
+    if (!file.path) {
+      res.redirect(`/files/${file.id}?error=This%20file%20is%20missing%20from%20storage.`);
+      return;
+    }
+
     if (!fs.existsSync(file.path)) {
       res.redirect(`/files/${file.id}?error=This%20file%20is%20missing%20from%20storage.`);
       return;
@@ -273,6 +293,8 @@ filesRouter.post("/upload", requireAuth, (req, res, next) => {
       return;
     }
 
+    let uploadedAsset: { public_id: string; secure_url: string } | null = null;
+
     try {
       let targetFolderId: string | null = null;
 
@@ -293,23 +315,35 @@ filesRouter.post("/upload", requireAuth, (req, res, next) => {
         targetFolderId = folder.id;
       }
 
+      uploadedAsset = await uploadToCloudinary(req.file.path);
+
       await prisma.file.create({
         data: {
+          cloudinaryPublicId: uploadedAsset.public_id,
           folderId: targetFolderId,
           mimeType: req.file.mimetype || null,
           name: req.file.originalname,
-          path: req.file.path,
+          path: null,
           size: req.file.size,
-          storedName: req.file.filename,
+          storedName: null,
+          url: uploadedAsset.secure_url,
           userId: user.id,
         },
       });
 
+      fs.unlink(req.file.path, () => {});
       res.redirect(
         `${redirectPath}?success=${encodeURIComponent(`Uploaded ${req.file.originalname}.`)}`,
       );
     } catch (uploadError) {
-      fs.unlink(req.file.path, () => {});
+      if (req.file) {
+        fs.unlink(req.file.path, () => {});
+      }
+
+      if (uploadedAsset) {
+        await deleteFromCloudinary(uploadedAsset.public_id);
+      }
+
       next(uploadError);
     }
   });
