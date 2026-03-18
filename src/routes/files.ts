@@ -1,6 +1,7 @@
 import fs from "node:fs";
 
 import { Router, type NextFunction, type Request, type Response } from "express";
+import multer from "multer";
 
 import { upload } from "../config/multer.js";
 import {
@@ -282,6 +283,20 @@ filesRouter.post("/upload", requireAuth, (req, res, next) => {
     }
 
     if (error) {
+      if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
+        res.redirect(
+          `${redirectPath}?error=File%20is%20too%20large.%20Maximum%20size%20is%205%20MB.`,
+        );
+        return;
+      }
+
+      if (error instanceof Error && error.message === "INVALID_FILE_TYPE") {
+        res.redirect(
+          `${redirectPath}?error=Only%20PNG,%20JPG,%20PDF,%20and%20TXT%20files%20are%20allowed.`,
+        );
+        return;
+      }
+
       res.redirect(
         `${redirectPath}?error=The%20upload%20did%20not%20complete.%20Please%20try%20again.`,
       );
